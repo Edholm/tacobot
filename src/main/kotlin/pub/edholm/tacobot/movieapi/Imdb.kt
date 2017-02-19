@@ -40,7 +40,11 @@ object Imdb {
         LOG.info("Scraping ${id.toUrl()}")
         val document: Document?
         try {
-            document = Jsoup.connect(id.toUrl()).userAgent("Mozilla/5.0 (X11; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0").get()
+            document = Jsoup.connect(id.toUrl())
+                    .userAgent("Mozilla/5.0 (X11; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0")
+                    .header("Accept-Language", "en-US")
+                    .followRedirects(false)
+                    .get()
         } catch(e: Exception) {
             LOG.error("Unable to scrape IMDb: ", e)
             return null
@@ -95,7 +99,7 @@ object Imdb {
         }
 
         fun toUrl(): String {
-            return "http://www.imdb.com/title/$titleId"
+            return "http://akas.imdb.com/title/$titleId/"
         }
     }
 }
