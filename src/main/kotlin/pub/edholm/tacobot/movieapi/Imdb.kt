@@ -103,7 +103,14 @@ object Imdb {
                        val genres: List<String>,
                        val releaseDate: LocalDate) {
         fun toPrettyString(): String {
-            return "$title ($year) $rating/10 $genres"
+            return "$title ($year) ${formatRating(rating)} $genres"
+        }
+
+        private fun formatRating(rating: String): String {
+           if (rating.isBlank()) {
+               return ""
+           }
+            return "$rating/10"
         }
     }
 
