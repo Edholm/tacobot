@@ -4,6 +4,7 @@ import org.pircbotx.hooks.ListenerAdapter
 import org.pircbotx.hooks.events.MessageEvent
 import pub.edholm.tacobot.logger
 import pub.edholm.tacobot.movieapi.Imdb
+import java.time.Duration
 
 class MovieListener : ListenerAdapter() {
     val LOG by logger()
@@ -27,6 +28,12 @@ class MovieListener : ListenerAdapter() {
         LOG.info("Found details: $details")
         LOG.info("Replying to ${event?.user?.nick}")
         event?.respondWith(details.toPrettyString())
-        event?.respondWith("Runtime: ${details.runtime.toHours()}h ${details.runtime.toMinutes() % 60}m | ${imdbResult.toUrl()}")
+        event?.respondWith("Runtime: ${parseRuntime(details.runtime)} | ${imdbResult.toUrl()}")
+    }
+
+    private fun parseRuntime(runtime: Duration): String {
+        val hours = if (runtime.toHours() > 0) "${runtime.toHours()}h " else ""
+        val minutes = "${runtime.toMinutes() % 60}m"
+        return "$hours$minutes"
     }
 }

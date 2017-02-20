@@ -82,7 +82,7 @@ object Imdb {
 
         return Details(id = id,
                 title = if (origTitle.isBlank()) title else origTitle,
-                year = year,
+                year = if (year.isBlank()) "${datePublished.year}" else year,
                 summary = summary,
                 rating = rating,
                 ratingCount = ratingCount,
