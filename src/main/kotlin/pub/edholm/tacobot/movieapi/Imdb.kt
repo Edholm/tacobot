@@ -30,6 +30,8 @@ object Imdb {
             id = getFirstIdFromArray("title_popular", json)
         } else if (json.has("title_exact")) {
             id = getFirstIdFromArray("title_exact", json)
+        } else if (json.has("title_substring")) {
+            id = getFirstIdFromArray("title_substring", json)
         } else if (json.has("title_approx")) {
             id = getFirstIdFromArray("title_approx", json)
         }
