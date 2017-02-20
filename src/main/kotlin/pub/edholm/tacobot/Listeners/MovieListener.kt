@@ -9,8 +9,8 @@ class MovieListener : ListenerAdapter() {
     val LOG by logger()
     override fun onMessage(event: MessageEvent?) {
         val msg = event?.message ?: return
+        // FIXME: use acutal nick of bot...
         if (!msg.startsWith("TacoBot:")) return
-        // TODO: Ignore messages from ourselves
 
         val query = msg.substringAfter(":").trim()
         LOG.info("IMDb request for '$query' from ${event?.user?.nick}")

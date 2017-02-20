@@ -20,8 +20,8 @@ fun main(args: Array<String>) {
 
     val serverEntry = Configuration.ServerEntry(parsedArgs.server, parsedArgs.port.toInt())
     val configuration = Configuration.Builder()
-            .setName("TacoBot")
-            .setLogin("TacoBot")
+            .setName(parsedArgs.nick)
+            .setLogin(parsedArgs.nick)
             .setRealName("TacoBot 1.0 beta")
             .addAutoJoinChannel(parsedArgs.channel)
             .addServer(serverEntry)
@@ -40,4 +40,5 @@ class Args(parser: ArgParser) {
     val server by parser.storing("-s", "--server", help = "The (SSL) server hostname").default("localhost")
     val port by parser.storing("-p", "--port", help = "IRC server port number").default("9999")
     val channel by parser.storing("-c", "--channel", help = "The channel to connect to")
+    val nick by parser.storing("-n", "--nick", help = "Bot nick").default("TacoBot")
 }
