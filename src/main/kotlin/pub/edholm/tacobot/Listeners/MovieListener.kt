@@ -1,5 +1,6 @@
 package pub.edholm.tacobot.Listeners
 
+import org.pircbotx.PircBotX
 import org.pircbotx.hooks.ListenerAdapter
 import org.pircbotx.hooks.events.MessageEvent
 import pub.edholm.tacobot.logger
@@ -10,8 +11,9 @@ class MovieListener : ListenerAdapter() {
     val LOG by logger()
     override fun onMessage(event: MessageEvent?) {
         val msg = event?.message ?: return
-        // FIXME: use acutal nick of bot...
-        if (!msg.startsWith("TacoBot:")) return
+
+        val botNick = event?.getBot<PircBotX>()?.nick
+        if (!msg.startsWith("$botNick:")) return
 
         val query = msg.substringAfter(":").trim()
         LOG.info("IMDb request for '$query' from ${event?.user?.nick}")
