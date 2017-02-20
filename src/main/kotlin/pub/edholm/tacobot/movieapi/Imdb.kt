@@ -8,6 +8,7 @@ import pub.edholm.tacobot.logger
 import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 object Imdb {
     val LOG by logger()
@@ -42,27 +43,43 @@ object Imdb {
         try {
             document = Jsoup.connect(id.toUrl())
                     .userAgent("Mozilla/5.0 (X11; Linux x86_64; rv:51.0) Gecko/20100101 Firefox/51.0")
-                    .header("Accept-Language", "en-US")
+                    //.header("Accept-Language", "en-US")
                     .followRedirects(false)
                     .get()
         } catch(e: Exception) {
             LOG.error("Unable to scrape IMDb: ", e)
             return null
         }
+        LOG.info("Successfully connected to ${id.toUrl()}")
 
         val title = document.select(".title_wrapper > h1:nth-child(1)").text().substringBeforeLast("(").trim()
+        val origTitle = document.select(".originalTitle").text().substringBeforeLast("(").trim()
         val year = document.select("#titleYear > a:nth-child(1)").text()
         val summary = document.select(".summary_text[itemprop=description]").text()
         val rating = document.select(".ratingValue > strong:nth-child(1) > span:nth-child(1)").text()
         val ratingCount = document.select("span.small[itemprop=ratingCount]").text()
-        val durationStr = document.select(".subtext > time:nth-child(3)").attr("datetime")
-        val runtime = Duration.parse(durationStr)
+        val durationStr = document.select("time[itemprop=duration]").attr("datetime")
         val genres = document.select(".itemprop[itemprop=genre]").map(Element::text)
+
+        var runtime: Duration
+        try {
+            runtime = Duration.parse(durationStr)
+        } catch(e: DateTimeParseException) {
+            LOG.error("Unable to parse runtime", e)
+            runtime = Duration.ZERO
+        }
+
         val datePublishedStr = document.select("meta[itemprop=datePublished]").attr("content")
-        val datePublished = LocalDate.parse(datePublishedStr, DateTimeFormatter.ISO_LOCAL_DATE)
+        var datePublished: LocalDate
+        try {
+            datePublished = LocalDate.parse(datePublishedStr, DateTimeFormatter.ISO_LOCAL_DATE)
+        } catch(e: DateTimeParseException) {
+            LOG.error("Unable to parse release date", e)
+            datePublished = LocalDate.MIN
+        }
 
         return Details(id = id,
-                title = title,
+                title = if (origTitle.isBlank()) title else origTitle,
                 year = year,
                 summary = summary,
                 rating = rating,
@@ -99,7 +116,7 @@ object Imdb {
         }
 
         fun toUrl(): String {
-            return "http://akas.imdb.com/title/$titleId/"
+            return "http://www.imdb.com/title/$titleId/"
         }
     }
 }
