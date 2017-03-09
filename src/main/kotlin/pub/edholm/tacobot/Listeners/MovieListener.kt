@@ -49,7 +49,8 @@ class MovieListener : ListenerAdapter() {
         LOG.info("Scraped details: $details")
         LOG.info("Replying to ${event?.user?.nick}")
         event?.respondWith(details.toPrettyString())
-        event?.respondWith("Runtime: ${parseRuntime(details.runtime)} | ${id.toUrl()}")
+        val runtimeStr = if (details.runtime.isZero) "" else "Runtime: ${parseRuntime(details.runtime)} | "
+        event?.respondWith("$runtimeStr${id.toUrl()}")
     }
 
     internal fun extractImdbId(msg: String): List<Imdb.Id> {

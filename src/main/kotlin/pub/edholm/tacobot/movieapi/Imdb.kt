@@ -67,7 +67,7 @@ object Imdb {
         try {
             runtime = Duration.parse(durationStr)
         } catch(e: DateTimeParseException) {
-            LOG.error("Unable to parse runtime", e)
+            LOG.error("Unable to parse runtime: $durationStr", e)
             runtime = Duration.ZERO
         }
 
@@ -76,7 +76,7 @@ object Imdb {
         try {
             datePublished = LocalDate.parse(datePublishedStr, DateTimeFormatter.ISO_LOCAL_DATE)
         } catch(e: DateTimeParseException) {
-            LOG.error("Unable to parse release date", e)
+            LOG.error("Unable to parse release date: $datePublishedStr", e)
             datePublished = LocalDate.MIN
         }
 
@@ -105,7 +105,14 @@ object Imdb {
                        val genres: List<String>,
                        val releaseDate: LocalDate) {
         fun toPrettyString(): String {
-            return "$title ($year) ${formatRating(rating)} $genres"
+            var format = "$title ($year) ${formatRating(rating)} $genres"
+            if (releaseDate.isAfter(LocalDate.now())) {
+                format += " | Release: ${releaseDate.format(DateTimeFormatter.ofPattern("EEEE d MMMM"))}"
+                if (releaseDate.year != LocalDate.now().year) {
+                    format += releaseDate.format(DateTimeFormatter.ofPattern(" YYYY"))
+                }
+            }
+            return format
         }
 
         private fun formatRating(rating: String): String {
