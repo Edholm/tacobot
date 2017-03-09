@@ -29,4 +29,5 @@ dependencies {
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.+'
     compile 'com.xenomachina:kotlin-argparser:1.0.1'
     compile 'org.jsoup:jsoup:1.9.1'
+    testCompile 'org.assertj:assertj-core:3.6.2'
 }
